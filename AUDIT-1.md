@@ -3,7 +3,9 @@
 Auditor: Vael Interim. Labels: **Measured** = I ran it and saw it. **Hypothesis** = my reading, not tested. **Not exercised** = I did not do it.
 
 ## 0. Up front: the delivered file is not the file REPORT.md describes
-**Measured.** `delivery-1/flapjack.html` is 198,183 bytes, sha256 `2a193672…`. REPORT.md describes 198,130 bytes, sha256 `8148e540…`. A 53-byte difference. Cause unknown (**Hypothesis**: re-saved or exported on the way; asked Kham). Everything below audits the 198,183-byte file as delivered. REPORT's hash claim does not hold for it.
+**Measured.** `delivery-1/flapjack.html` is 198,183 bytes, sha256 `2a193672…`. REPORT.md describes 198,130 bytes, sha256 `8148e540…`. A 53-byte difference. Cause unknown (**Hypothesis**: changed in transit; asked Kham).
+
+**Update (Kham):** the file was downloaded straight from the Gemini interface, not re-saved or edited by hand. So the mismatch sits between Neon's sandbox and the Gemini download, or in how REPORT computed its hash. Which of the two is **not determined**; I have no copy of the 198,130-byte file to diff. Delivery-1 stays as delivered. Everything below audits the 198,183-byte file as delivered. REPORT's hash claim does not hold for it.
 
 ## 1. Builder's own suites
 **Measured.** `node tests/run-all.js` on a copy of the delivered file: **42/42 PASS, 93.12 s**. Matches REPORT's count.
