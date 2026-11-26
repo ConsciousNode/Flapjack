@@ -5,7 +5,9 @@ Auditor: Vael Interim. Labels: **Measured** = I ran it and saw it. **Hypothesis*
 ## 0. Up front: the delivered file is not the file REPORT.md describes
 **Measured.** `delivery-1/flapjack.html` is 198,183 bytes, sha256 `2a193672…`. REPORT.md describes 198,130 bytes, sha256 `8148e540…`. A 53-byte difference. Cause unknown (**Hypothesis**: changed in transit; asked Kham).
 
-**Update (Kham):** the file was downloaded straight from the Gemini interface, not re-saved or edited by hand. So the mismatch sits between Neon's sandbox and the Gemini download, or in how REPORT computed its hash. Which of the two is **not determined**; I have no copy of the 198,130-byte file to diff. Delivery-1 stays as delivered. Everything below audits the 198,183-byte file as delivered. REPORT's hash claim does not hold for it.
+**Update (Kham):** the file was downloaded straight from the Gemini interface, not re-saved or edited by hand. So the mismatch sits between Neon's sandbox and the Gemini download, or in how REPORT computed its hash. Which of the two is **not determined**; I have no copy of the 198,130-byte file to diff. Delivery-1 stays as delivered.
+
+**Resolved (Measured, Neon's figures from Kham):** Neon reports sha256 `8148e540…`, 198,184 bytes UTF-8 on disk, 198,130 JS string code units. My copy of the delivery is 198,183 bytes and 198,129 code units. Appending one `\n` to my copy gives sha256 `8148e540…` exactly. So the files are byte-identical except for a single trailing newline, which the Gemini download dropped. The "198,130 B" in REPORT is a string length, not a byte count (the 54 extra bytes are non-ASCII characters). Not a content change; the delivered file is functionally Neon's file. REPORT's size line is mislabelled, and the hash covers a file with a final newline. Everything below audits the 198,183-byte file as delivered. REPORT's hash claim does not hold for it.
 
 ## 1. Builder's own suites
 **Measured.** `node tests/run-all.js` on a copy of the delivered file: **42/42 PASS, 93.12 s**. Matches REPORT's count.
