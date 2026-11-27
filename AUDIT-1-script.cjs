@@ -60,14 +60,21 @@ out('decoder#9 SA0 lockstep', lockN(stuck(net, gd, 0), 150));
 out('ir#2 SA1 lockstep', lockN(stuck(net, gi, 1), 150));
 // opcode census of the program
 const ops = {}; for (const w of game.words) { const o = (w >> 11) & 31; ops[o] = (ops[o] || 0) + 1; } out('opcode field census (bits15:11)', JSON.stringify(ops));
-const un = []; for (let k = 0; k < 40; k++) { const g = findGate(net, 'cpu/ir', k); if (g < 0) break; for (const v of [0, 1]) { const r = lockN(stuck(net, g, v), 40); if (r.startsWith('NOT')) un.push('ir#' + k + '(g' + g + ') SA' + v); } }
-out('cpu/ir gates 0-39 uncaught in 40 frames', un.join(', ') || 'none');
-for (const k of [10, 20]) for (const v of [0, 1]) out('ir#' + k + ' SA' + v + ' 600 frames lockstep', lockN(stuck(net, findGate(net, 'cpu/ir', k), v), 600));
-// are these gates fan-out-free (dead)?  count readers
-const readers = g => { const w = net.numInputs + g; let c = 0; for (let i = 0; i < net.numGates; i++) if (net.gateA[i] === w || net.gateB[i] === w) c++; return c; };
-out('fanout of ir g47..g50, g60, g72', [47, 48, 49, 50, 60, 72].map(g => 'g' + g + ':' + readers(g)).join(' '));
-// trace the fanout chain from ir g47 to see where it leads
-function readersOf(g) { const w = net.numInputs + g, r = []; for (let i = 0; i < net.numGates; i++) if (net.gateA[i] === w || net.gateB[i] === w) r.push(i); return r; }
-let cur = 47; const chain = []; for (let d = 0; d < 12; d++) { const r = readersOf(cur); chain.push('g' + cur + '[' + net.gates[cur].block + ']->' + (r.length ? r.map(x => 'g' + x + '[' + net.gates[x].block + ']').join(',') : 'NONE')); if (r.length !== 1) break; cur = r[0]; }
-console.log(chain.join('\n'));
-const ffNames = net.flipFlops.filter(f => JSON.stringify(f).indexOf('ir') !== -1).length; out('flipflops mentioning ir', ffNames);
+// forward closure from a gate: set of gates reachable through fanout
+const rd = new Map(); for (let i = 0; i < net.numGates; i++) for (const w of [net.gateA[i], net.gateB[i]]) { if (w >= net.numInputs) { const g = w - net.numInputs; if (!rd.has(g)) rd.set(g, new Set()); rd.get(g).add(i); } }
+function closure(start) { const seen = new Set(start), q = [...start]; while (q.length) { const g = q.pop(); for (const h of (rd.get(g) || [])) if (!seen.has(h)) { seen.add(h); q.push(h); } } return seen; }
+const slice0 = []; for (let g = 47; g <= 59; g++) slice0.push(g); const slice1 = []; for (let g = 60; g <= 72; g++) slice1.push(g);
+const dead = [...slice0, ...slice1];
+const c0 = closure(slice0), c1 = closure(slice1);
+out('IR[0] slice g47-59 closure size / escapes slice?', c0.size + ' / ' + [...c0].filter(g => g < 47 || g > 59).length);
+out('IR[1] slice g60-72 closure size / escapes slice?', c1.size + ' / ' + [...c1].filter(g => g < 60 || g > 72).length);
+out('closure of g44-46 (shared we) covers g47..g254?', [44, 45, 46].map(g => closure([g]).size).join(','));
+// do gates 44-46 and 73+ reach outside cpu/ir ?
+const irAll = new Set(net.gates.map((g, i) => g.block.indexOf('cpu/ir') === 0 ? i : -1).filter(i => i >= 0));
+out('cpu/ir gate id range', Math.min(...irAll) + '-' + Math.max(...irAll) + ' count ' + irAll.size);
+const observable = [...irAll].filter(g => [...closure([g])].some(h => !irAll.has(h)));
+out('cpu/ir gates with a path to any non-ir gate', observable.length + ' of ' + irAll.size);
+out('cpu/ir gates with NO path out of cpu/ir', [...irAll].filter(g => !observable.includes(g)).length + ': ' + [...irAll].filter(g => !observable.includes(g)).slice(0, 3).join(',') + '..' + [...irAll].filter(g => !observable.includes(g)).slice(-1));
+out('g74 SA1 lockstep 600 frames', lockN(stuck(net, 74, 1), 600));
+out('g73 SA0/SA1 lockstep 150 frames', lockN(stuck(net, 73, 0), 150) + ' | ' + lockN(stuck(net, 73, 1), 150));
+out('findGate(cpu/ir,3) id (their fault 12)', findGate(net, 'cpu/ir', 3));
