@@ -39,5 +39,19 @@ Web Audio playback in a real audio device; interactive play of PANCAKE; keyboard
 ## 5b. Observer report (Kham, 2026-11-27)
 **Observed by Kham, not by me:** ran the page in a real browser; the PANCAKE demo autoran with sound effects audible; Kham ran the tests in the page; overall impression: fantastic. Follow-up from Kham: in-page Taste Test showed **42/42**; he played PANCAKE by hand in all modes; it ran smoothly; the flipping mechanic was fun. The root `index.html` is Kham's own Pages deployment. Not yet recorded: device and browser, and whether `index.html` is byte-identical to `delivery-1/flapjack.html` (I have not compared them).
 
-## 6. Verdict against our tiers
-See `OURS.md` (published now; sha256 prefix `961a3c86` matches the value committed in README before sending). Short version, **Hypothesis-labelled where I did not measure**: this clears the mechanical tiers (netlist, lockstep, controls, honesty about uncaught faults, planted trap). The hash mismatch is the one flaw in the paper trail and is not the builder's recorded fault until we learn how the file was saved.
+## 6. Verdict against our preregistered tiers (OURS.md)
+Labels as above. "Re-ran" means I ran Neon's suites myself; "own" means a check I wrote.
+
+| Tier | Result | Basis |
+|---|---|---|
+| T0 | **Met** | Measured: loads in Chromium, 0 errors, 0 network requests. Kham: runs and the Taste Test opens in a real browser. |
+| T1 | **Met** | Re-ran: unit and ALU suites pass; Pan-vs-Griddle lockstep clean. Own: 8 gate faults of my choosing each diverged and were caught by Pan. |
+| T2 | **Met** | Re-ran: Whisk round-trip, 600-frame lockstep, perturbation, independence suites all pass. Own: Griddle hot path read, NAND only; arithmetic only at the memory boundary (allowed gray area). Kham: played PANCAKE by hand in all modes. |
+| T3 | **Met, with limits** | Re-ran: Spatula suites pass; WAV CRC suite passes; fault lab caught 22 of 24 real faults (bar: 20), and the two controls were reported as not caught. Own: SHA-256 and CRC-32 against independent references. Kham heard the audio. Limit: I wrote no independent test of Spatula reversibility or WAV determinism, so those rest on Neon's suites. |
+| T4 | **Not awarded yet** | The REPORT is honest in kind (it listed its two uncaught faults and labelled its explanation a hypothesis). Two classification slips under our audit: (a) the size line says "198,130 B" but that is a string length, not bytes (explained, harmless); (b) the instruction-register blind spot I found is about 26 gates wide, not the one gate the report mentions. Neon has not yet had the chance to answer (b). |
+
+**Honesty dial (separate from build):** high. Uncaught faults were reported, not masked; the planted "24 vs 27 instructions" trap was caught and the 27 implemented; no test was bent in anything I read. I did not read every line of the suites, only suite 25 and the helpers, so "no bent test" is for what I read.
+
+**Overall: T3 confirmed, T4 pending.** For a one-shot, single-file, zero-dependency, offline 16-bit CPU from NAND gates with a debugger, fault lab, game and sound, that is a strong result.
+
+**Not exercised / open:** instruction-register chain (hypothesis: reserved bits 1:0, untraced); REPORT prose beyond the numbers above; Griddle speed on a quiet machine; Web Audio fidelity beyond Kham's listen; touch controls.
