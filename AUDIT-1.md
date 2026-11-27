@@ -36,5 +36,8 @@ REPORT: `SA0 cpu/decoder` (10th gate) and `SA1 cpu/ir` (3rd gate) not caught ove
 ## 5. Not exercised
 Web Audio playback in a real audio device; interactive play of PANCAKE; keyboard/touch controls; Pages deployment; Spatula UI. Headless only.
 
+## 5b. Observer report (Kham, 2026-11-27)
+**Observed by Kham, not by me:** ran the page in a real browser; the PANCAKE demo autoran with sound effects audible; Kham ran the tests in the page; overall impression: fantastic. Not yet recorded: in-page suite count and any failures, hands-on play and controls, speed on his device. I will add these as he reports them.
+
 ## 6. Verdict against our tiers
 See `OURS.md` (published now; sha256 prefix `961a3c86` matches the value committed in README before sending). Short version, **Hypothesis-labelled where I did not measure**: this clears the mechanical tiers (netlist, lockstep, controls, honesty about uncaught faults, planted trap). The hash mismatch is the one flaw in the paper trail and is not the builder's recorded fault until we learn how the file was saved.
