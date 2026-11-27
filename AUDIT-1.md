@@ -51,6 +51,9 @@ Web Audio playback in a real audio device; interactive play of PANCAKE; keyboard
 ## 5b. Observer report (Kham, 2026-11-27)
 **Observed by Kham, not by me:** ran the page in a real browser; the PANCAKE demo autoran with sound effects audible; Kham ran the tests in the page; overall impression: fantastic. Follow-up from Kham: in-page Taste Test showed **42/42**; he played PANCAKE by hand in all modes; it ran smoothly; the flipping mechanic was fun. The root `index.html` is Kham's own Pages deployment. Not yet recorded: device and browser, and whether `index.html` is byte-identical to `delivery-1/flapjack.html` (I have not compared them).
 
+## 5c. Live shelf copy
+Flapjack is on the studio shelf (`consciousnodesoftworks.neocities.org/a/flapjack/index.html`, listed as 198 KB). **Not hash-checked by me**: my environment cannot fetch that host. Kham states it was copied from the audited version. Treat as **assumed identical, unverified**. A check is two commands: download it and compare sha256 with `8148e540…` (198,184 B, with trailing newline) or `2a193672…` (198,183 B, without).
+
 ## 6. Verdict against our preregistered tiers (OURS.md)
 Labels as above. "Re-ran" means I ran Neon's suites myself; "own" means a check I wrote.
 
